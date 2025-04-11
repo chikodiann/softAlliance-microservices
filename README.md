@@ -30,7 +30,7 @@ To run this project on your machine, make sure you have Java installed. Then, fo
 1. Clone the repository
 
 ```
-git clone https://github.com/scar-06/softAlliance-microservices
+git clone  https://github.com/chikodiann/softAlliance-microservices.git
 ```
 
 2. Run each microservice
