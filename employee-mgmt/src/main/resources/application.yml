@@ -1,0 +1,21 @@
+
+spring:
+  datasource:
+    username: postgres
+    password: Manifest
+    url: jdbc:postgresql://localhost:5432/employeeDB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  application:
+    name: employee-management
+
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+  port: 8060

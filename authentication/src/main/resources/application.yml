@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    username: postgres
+    password: Manifest
+    url: jdbc:postgresql://localhost:5432/userDB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  application:
+    name: authentication
+
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+  port: 8090
