@@ -4,6 +4,8 @@ import com.chikodiann.authentication.dto.ErrorResponseDTO;
 import com.chikodiann.authentication.dto.LoginDto;
 import com.chikodiann.authentication.dto.SignUpDto;
 import com.chikodiann.authentication.dto.UserDto;
+import com.chikodiann.authentication.entity.Users;
+import com.chikodiann.authentication.mapper.UserMapper;
 import com.chikodiann.authentication.repository.AuthRepository;
 import com.chikodiann.authentication.service.impl.AuthServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -189,5 +192,13 @@ public class AuthController {
         return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
     }
 
+    @GetMapping("/user-by-email")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE', 'MANAGER')")
+    public ResponseEntity<UserDto> getUserByEmail(@RequestParam String email) {
+        Users user = authRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserDto dto = UserMapper.mapToUserDto(user, new UserDto());
+        return ResponseEntity.ok(dto);
+    }
 
 }

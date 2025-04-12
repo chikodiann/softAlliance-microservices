@@ -2,7 +2,7 @@ spring:
   datasource:
     username: postgres
     password: Manifest
-    url: jdbc:postgresql://localhost:5432/userDB
+    url: jdbc:postgresql://postgres-db:5432/userDB
   jpa:
     hibernate:
       ddl-auto: update

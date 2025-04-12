@@ -20,4 +20,7 @@ public interface EmployeeInterface {
 
     @DeleteMapping("/auth/delete-user/{userId}")
     ResponseEntity<String> deleteUserForEmployee(@PathVariable("userId") Long userId);
+
+    @GetMapping("/auth/user-by-email")
+    ResponseEntity<UserDto> getUserForEmployeeByEmail(@RequestParam("email") String email);
 }

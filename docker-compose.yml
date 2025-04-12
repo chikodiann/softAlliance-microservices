@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Service
+  db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Manifest
+      - POSTGRES_DB=userDB  # Database for authentication service
+    ports:
+      - "5433:5433"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # Service Registry (Eureka Server)
+  service-registry:
+    build: ./service-registry  # Path to the service-registry directory
+    container_name: service-registry
+    ports:
+      - "8761:8761"  # Expose the Eureka dashboard on port 8761
+
+  # Authentication Service
+  authentication-service:
+    build: ./authentication  # Path to the authentication service
+    container_name: authentication-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/userDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Manifest
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db
+      - service-registry  # Ensure service registry is up before authentication service
+
+  # Employee Management Service
+  employee-service:
+    build: ./employee-mgmt  # Path to the employee management service
+    container_name: employee-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/userDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Manifest
+    ports:
+      - "8060:8060"
+    depends_on:
+      - db
+      - service-registry  # Ensure service registry is up before employee service
+
+  # API Gateway Service
+  api-gateway:
+    build: ./api-gateway  # Path to api-gateway service
+    container_name: api-gateway
+    environment:
+      - SPRING_CLOUD_GATEWAY_ROUTES=...
+    ports:
+      - "8050:8050"
+    depends_on:
+      - authentication-service
+      - employee-service
+      - service-registry  # Ensure service registry is up before api-gateway
+
+# Volumes to persist DB data
+volumes:
+  db_data:
+    driver: local

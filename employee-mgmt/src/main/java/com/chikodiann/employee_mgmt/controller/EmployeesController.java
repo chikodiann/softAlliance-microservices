@@ -4,6 +4,7 @@ import com.chikodiann.employee_mgmt.dto.EmployeesDTO;
 import com.chikodiann.employee_mgmt.dto.ErrorResponseDTO;
 import com.chikodiann.employee_mgmt.dto.ResponseDTO;
 import com.chikodiann.employee_mgmt.dto.UserDto;
+import com.chikodiann.employee_mgmt.feign.EmployeeInterface;
 import com.chikodiann.employee_mgmt.service.impl.DepartmentServiceImpl;
 import com.chikodiann.employee_mgmt.service.impl.EmployeesServiceImpl;
 import com.chikodiann.employee_mgmt.constants.EmployeeConstants;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +32,13 @@ import java.util.List;
 public class EmployeesController {
     private final EmployeesServiceImpl userService;
     private final DepartmentServiceImpl departmentService;
+    private final EmployeeInterface employeeInterface;
 
     @Autowired
-    public EmployeesController(EmployeesServiceImpl userService, DepartmentServiceImpl departmentService) {
+    public EmployeesController(EmployeesServiceImpl userService, DepartmentServiceImpl departmentService, EmployeeInterface employeeInterface) {
         this.userService = userService;
         this.departmentService = departmentService;
+        this.employeeInterface = employeeInterface;
     }
 
     @Operation(
@@ -152,4 +156,13 @@ public class EmployeesController {
         List<EmployeesDTO> employeesByDepartment = departmentService.getEmployeesByDepartment(departmentId);
         return ResponseEntity.status(HttpStatus.OK).body(employeesByDepartment);
     }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<UserDto> viewOwnDetails(Authentication authentication) {
+        String email = authentication.getName();
+        UserDto user = employeeInterface.getUserForEmployeeByEmail(email).getBody();
+        return ResponseEntity.ok(user);
+    }
+
 }
