@@ -12,6 +12,7 @@ This is a microservice application built with Spring Boot and Spring Cloud to ma
 - PostgreSQL
 - Lombok
 - Swagger
+- Docker
 
 ## Architecture
 
@@ -50,6 +51,30 @@ http://localhost:8080/swagger-ui.html
 ```
 http://localhost:8761
 ```
+
+### Docker Integration:
+This project is also Dockerized for easy deployment. You can run the services inside Docker containers for a seamless development experience.
+
+#### To run the project in Docker:
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/chikodiann/softAlliance-microservices.git
+    ```
+2. **Build and start the Docker containers**:
+    - Ensure Docker is installed and running on your machine.
+    - Navigate to the project directory and run:
+      ```bash
+      docker-compose up --build
+      ```
+3. **Access the services**:
+    - **Swagger UI**: Access it at `http://localhost:8080/swagger-ui.html` to explore the available endpoints.
+    - **Eureka UI**: Access the service registry at `http://localhost:8761`
+
+### Additional Information:
+- **PostgreSQL Database**: Ensure your database is up and running in the Docker container.
+- **Swagger**: For testing and documentation, use the Swagger UI provided by the application at `http://localhost:8080/swagger-ui.html`.
+- **Eureka**: Use Eureka to see all the microservices registered and running at `http://localhost:8761`.
+
 
 ## Endpoints
 
