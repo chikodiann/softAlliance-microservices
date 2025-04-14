@@ -12,11 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employees {
-
     @Id
     private Long userId;
 
     private Long departmentId;
-
-
 }

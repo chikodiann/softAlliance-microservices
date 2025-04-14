@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/employee")
 @Tag(
@@ -41,24 +42,11 @@ public class EmployeesController {
         this.employeeInterface = employeeInterface;
     }
 
-    @Operation(
-            summary = "Admin Update User For Employee REST API",
-            description = "REST API for admin to update employee user details"
-    )
+    @Operation(summary = "Admin Update User For Employee REST API", description = "REST API for admin to update employee user details")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Successful operation"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @PutMapping("/update-employee/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDTO> updateEmployee(@RequestBody UserDto employeeDTO,
@@ -75,24 +63,11 @@ public class EmployeesController {
         }
     }
 
-    @Operation(
-            summary = "Admin Delete User For Employee REST API",
-            description = "REST API for admin to delete user employee"
-    )
+    @Operation(summary = "Admin Delete User For Employee REST API", description = "REST API for admin to delete user employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Successful operation"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @DeleteMapping("/delete-employee/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -109,24 +84,11 @@ public class EmployeesController {
         }
     }
 
-    @Operation(
-            summary = "View Employee REST API",
-            description = "REST API for admin to delete user employee"
-    )
+    @Operation(summary = "View Employee REST API", description = "REST API for admin to delete user employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Successful operation"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @GetMapping("/get-employee/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> viewEmployee(@PathVariable Long userId) {
@@ -135,20 +97,11 @@ public class EmployeesController {
         return ResponseEntity.status(HttpStatus.OK).body(employeeDTO);
     }
 
-    @Operation(
-            summary = "View Employees by Department REST API",
-            description = "Allows Admin or Manager to fetch employees in a specific department"
-    )
+    @Operation(summary = "View Employees by Department REST API", description = "Allows Admin or Manager to fetch employees in a specific department")
     @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Employees retrieved successfully"),
             @ApiResponse(
-                    responseCode = "200",
-                    description = "Employees retrieved successfully"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Internal Server Error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
-            )
+                    responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @GetMapping("/get-department-employees/{departmentId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")

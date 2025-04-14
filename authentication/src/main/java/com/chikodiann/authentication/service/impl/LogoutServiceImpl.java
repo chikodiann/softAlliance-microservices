@@ -17,14 +17,19 @@ public class LogoutServiceImpl implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        // Check if there is an active session and invalidate it
         HttpSession session = request.getSession();
         if (session != null) {
             session.invalidate();
             log.info("Session invalidated for user: {}",
                     authentication != null ? authentication.getName() : "Unknown");
+        } else {
+            log.warn("Attempted logout with no session available");
         }
+
+        // Clear the SecurityContext to remove any authentication info
         SecurityContextHolder.clearContext();
-        log.info("Security context cleared");
+        log.info("Security context cleared for user: {}",
+                authentication != null ? authentication.getName() : "Unknown");
     }
 }
-

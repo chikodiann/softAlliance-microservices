@@ -31,23 +31,50 @@ public class EmployeesServiceImpl implements EmployeesService {
     @Override
     public UserDto getEmployeeById(Long id) {
         log.info("Fetching employee with ID: {}", id);
-        return employeeInterface.getUserForEmployee(id).getBody();
+        UserDto employeeDto = employeeInterface.getUserForEmployee(id).getBody();
+        if (employeeDto != null) {
+            log.info("Fetched employee details: {}", employeeDto);
+        } else {
+            log.warn("Employee with ID {} not found in the external service", id);
+        }
+        return employeeDto;
     }
 
     @Override
     public boolean updateEmployee(Long id, UserDto employeeDto) {
         log.info("Updating employee with ID: {}", id);
-        String response = employeeInterface.updateUserForEmployee(id, employeeDto).getBody();
-        return response != null && response.toLowerCase().contains("success");
+        try {
+            String response = employeeInterface.updateUserForEmployee(id, employeeDto).getBody();
+            if (response != null && response.toLowerCase().contains("success")) {
+                log.info("Successfully updated employee with ID: {}", id);
+                return true;
+            } else {
+                log.error("Failed to update employee with ID: {}", id);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while updating employee with ID: {}: {}", id, e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean deleteEmployee(Long id) {
         log.info("Deleting employee with ID: {}", id);
-        Employees employees = employeesRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Employee not found"));
-        employeesRepository.delete(employees);
-        employeeInterface.deleteUserForEmployee(id);
-        return true;
+        Employees employee = employeesRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Employee with ID {} not found", id);
+                    return new UserNotFoundException("Employee not found");
+                });
+        employeesRepository.delete(employee);
+        log.info("Successfully deleted employee with ID: {}", id);
+        try {
+            employeeInterface.deleteUserForEmployee(id);
+            log.info("Successfully deleted employee from external service with ID: {}", id);
+            return true;
+        } catch (Exception e) {
+            log.error("Error occurred while deleting employee from external service with ID: {}: {}", id, e.getMessage());
+            return false;
+        }
     }
 }

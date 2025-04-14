@@ -42,6 +42,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             EmployeesDTO employeeDTO = EmployeeMapper.mapToEmployeeDto(employee, new EmployeesDTO());
             employeesDTOList.add(employeeDTO);
         }
+        log.info("Fetched {} employees for department ID: {}", employeesDTOList.size(), departmentId);
         return employeesDTOList;
     }
 
@@ -49,19 +50,22 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("Fetching department details for ID: {}", departmentId);
         Department department = departmentRepository.findById(departmentId).orElseThrow(
                 () -> new ResourceNotFoundException("Department", "id", departmentId.toString()));
+        log.info("Fetched department: {}", department.getName());
         return DepartmentMapper.maptoDepartmentDTO(department, new DepartmentDTO());
     }
 
     public Department saveDepartment(DepartmentDTO departmentDTO) {
         log.info("Saving new department: {}", departmentDTO.getName());
         if (departmentRepository.existsByName(departmentDTO.getName())) {
-            throw new DepartmentAlreadyExistsException("Department already exists, please create a different one" );
+            log.error("Department with name '{}' already exists", departmentDTO.getName());
+            throw new DepartmentAlreadyExistsException("Department already exists, please create a different one");
         }
         Department department = new Department();
-
         department.setName(departmentDTO.getName());
         department.setDescription(departmentDTO.getDescription());
-        return departmentRepository.save(department);
+        Department savedDepartment = departmentRepository.save(department);
+        log.info("Saved new department with ID: {}", savedDepartment.getId());
+        return savedDepartment;
     }
 
     @Override
@@ -71,10 +75,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not Found"));
 
-            department.setName(departmentDTO.getName());
-            department.setDescription(departmentDTO.getDescription());
+        department.setName(departmentDTO.getName());
+        department.setDescription(departmentDTO.getDescription());
 
-            departmentRepository.save(department);
+        Department updatedDepartment = departmentRepository.save(department);
+        log.info("Updated department with ID: {} and name: {}", updatedDepartment.getId(), updatedDepartment.getName());
         return true;
     }
 
@@ -83,6 +88,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("Deleting department ID: {}", id);
         Department department = departmentRepository.findById(id).orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
         departmentRepository.delete(department);
+        log.info("Deleted department with ID: {}", id);
         return true;
     }
 }

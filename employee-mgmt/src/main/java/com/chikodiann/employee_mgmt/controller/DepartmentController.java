@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/department")
 @Tag(
@@ -26,34 +26,18 @@ import org.springframework.web.bind.annotation.*;
         description = "CRUD REST APIs to CREATE, FETCH, UPDATE and DELETE department"
 )
 public class DepartmentController {
-
-
     private final DepartmentServiceImpl departmentService;
-
 
     @Autowired
     public DepartmentController(DepartmentServiceImpl departmentService) {
         this.departmentService = departmentService;
     }
 
-    @Operation(
-            summary = "Fetch Department REST API",
-            description = "REST API to fetch employee"
-    )
+    @Operation(summary = "Fetch Department REST API", description = "REST API to fetch employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @GetMapping("/get-details/{departmentId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<DepartmentDTO> viewDepartment(@PathVariable Long departmentId) {
@@ -62,25 +46,11 @@ public class DepartmentController {
         return ResponseEntity.status(HttpStatus.OK).body(departmentDTO);
     }
 
-    @Operation(
-            summary = "Admin Add Department REST API",
-            description = "Allows admin to add a new department"
-    )
+    @Operation(summary = "Admin Add Department REST API", description = "Allows admin to add a new department")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
-
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Department> addDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
@@ -89,29 +59,16 @@ public class DepartmentController {
     }
 
 
-    @Operation(
-            summary = "Admin Update Department For Employee REST API",
-            description = "REST API for admin to update department"
-    )
+    @Operation(summary = "Admin Update Department For Employee REST API", description = "REST API for admin to update department")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @PutMapping("/update/{departmentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDTO> updateDepartment(@RequestBody DepartmentDTO departmentDTO,
                                                         @PathVariable Long departmentId) {
-        Boolean isUpdated = departmentService.updateDepartment(departmentId, departmentDTO);
+        boolean isUpdated = departmentService.updateDepartment(departmentId, departmentDTO);
         if (isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -123,20 +80,10 @@ public class DepartmentController {
         }
     }
 
-    @Operation(
-            summary = "Admin Delete Department REST API",
-            description = "Allows admin to delete a department by its ID"
-    )
+    @Operation(summary = "Admin Delete Department REST API", description = "Allows admin to delete a department by its ID")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Department deleted successfully"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Internal Server Error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
-            )
+            @ApiResponse(responseCode = "200", description = "Department deleted successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @DeleteMapping("/delete/{departmentId}")
     @PreAuthorize("hasRole('ADMIN')")

@@ -24,3 +24,4 @@ public class ResponseDTO {
     private String statusMsg;
 
 }
+

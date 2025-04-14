@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
 @Tag(
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.*;
         description = "REST APIs to sign up or login users"
 )
 public class AuthController {
-    private AuthRepository authRepository;
-    private AuthServiceImpl userService;
+    private final AuthRepository authRepository;
+    private final AuthServiceImpl userService;
 
     @Autowired
     public AuthController(AuthServiceImpl userService, AuthRepository authRepository) {
@@ -38,49 +38,23 @@ public class AuthController {
         this.authRepository = authRepository;
     }
 
-    @Operation(
-            summary = "Sign Up Employee REST API",
-            description = "REST API to sign up new employee"
-    )
+    @Operation(summary = "Sign Up Employee REST API", description = "REST API to sign up new employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error",content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUpEmployee(@RequestBody SignUpDto signupDto, final HttpServletRequest request){
+    public ResponseEntity<String> signUpEmployee(@RequestBody SignUpDto signupDto){
         userService.saveEmployee(signupDto);
         return new ResponseEntity<>("Signup successful", HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Sign Up Admin REST API",
-            description = "REST API to sign up new admin"
-    )
+    @Operation(summary = "Sign Up Admin REST API", description = "REST API to sign up new admin")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @PostMapping("/sign-up/admin")
     @PreAuthorize("hasRole('ADMIN')")
@@ -89,52 +63,22 @@ public class AuthController {
         return new ResponseEntity<>("Admin signup successful", HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Login Employee REST API",
-            description = "REST API to login employee"
-    )
+    @Operation(summary = "Signup Admin REST API", description = "REST API to login employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
-
-
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String result = userService.logInEmployee(loginDto);
-        return new ResponseEntity<>("Login successful!", HttpStatus.OK);
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        String token = userService.logInEmployee(loginDto);
+        return ResponseEntity.ok("Bearer " + token);
     }
 
-
-    @Operation(
-            summary = "Fetch Employee REST API",
-            description = "REST API to fetch employee"
-    )
+    @Operation(summary = "Fetch Employee REST API", description = "REST API to fetch employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
-
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @GetMapping("/generate-user")
     public ResponseEntity<UserDto> getUserForEmployee(Long userId){
@@ -142,24 +86,11 @@ public class AuthController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Update User For Employee REST API",
-            description = "REST API to update employee user details"
-    )
+    @Operation(summary = "Update User For Employee REST API", description = "REST API to update employee user details")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @PutMapping("/update-user/{userId}")
     public ResponseEntity<String> updateUserForEmployee(@PathVariable Long userId, @RequestBody UserDto userDto){
@@ -167,24 +98,11 @@ public class AuthController {
         return new ResponseEntity<>("User successfully updated", HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Delete User For Employee REST API",
-            description = "REST API to delete user employee"
-    )
+    @Operation(summary = "Delete User For Employee REST API", description = "REST API to delete user employee")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "HTTP Status CREATED"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-    }
-    )
+            @ApiResponse(responseCode = "201", description = "HTTP Status CREATED"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
 
     @DeleteMapping("/delete-user/{userId}")
     public ResponseEntity<String> deleteUserForEmployee(@PathVariable Long userId){

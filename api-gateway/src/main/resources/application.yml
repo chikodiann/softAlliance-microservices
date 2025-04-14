@@ -1,3 +1,6 @@
+server:
+  port: 8050
+
 spring:
   application:
     name: api-gateway
@@ -6,11 +9,28 @@ spring:
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: true
+      routes:
+        - id: authentication
+          uri: lb://authentication
+          predicates:
+            - Path=/authentication/**
+        - id: employee-management
+          uri: lb://employee-management
+          predicates:
+            - Path=/employee-management/**
 
-server:
-  port: 8050
-
-
-
-
+# Swagger configuration to expose API documentation for the services
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      authentication:
+        path: /authentication/v3/api-docs
+      employee-management:
+        path: /employee-management/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    csrf:
+      enabled: true
+    url: /v3/api-docs

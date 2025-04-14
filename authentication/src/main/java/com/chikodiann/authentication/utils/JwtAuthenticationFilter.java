@@ -22,8 +22,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
-    private JwtUtils utils;
-    private AuthServiceImpl userService;
+    private final JwtUtils utils;
+    private final AuthServiceImpl userService;
 
 
     @Autowired
@@ -31,8 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.utils = utils;
         this.userService = userService;
     }
-
-
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -43,19 +41,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Extract the token from the request header
         final String token;
         final String authenticationHeader = request.getHeader("Authorization");
-        final String username;
 
-        if (authenticationHeader == null && !authenticationHeader.startsWith("Bearer ")) {
+        if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-            token = authenticationHeader.substring(7);
-            username =utils.extractUsername.apply(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        token = authenticationHeader.substring(7);
+        String username = utils.extractUsername.apply(token);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
 
-            if (utils.isTokenValid.apply(token,userDetails.getUsername())){
+            if (utils.isTokenValid.apply(token, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -64,7 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-
-
     }
+
 }

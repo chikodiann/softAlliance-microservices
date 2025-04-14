@@ -1,9 +1,21 @@
+server:
+  port: 8060
 
 spring:
+  application:
+    name: employee-management
+  cloud:
+    discovery:
+      enabled: true
+
   datasource:
+    #username: postgres
+    #password: Manifest
+    #url: jdbc:postgresql://postgres-db:5432/userDB
+    #Test credentials
     username: postgres
-    password: Manifest
-    url: jdbc:postgresql://postgres-db:5432/userDB
+    password: 1234
+    url: jdbc:postgresql://localhost:5432/userDB
   jpa:
     hibernate:
       ddl-auto: update
@@ -11,11 +23,25 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  application:
-    name: employee-management
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
 
-server:
-  error:
-    include-exception: true
-    include-stacktrace: always
-  port: 8060
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      employee-management:
+        path: /employee-management/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    csrf:
+      enabled: true
+    url: /v3/api-docs
+
